@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "382644969837",
+    "firebase_url": "https://newritmaflex.firebaseio.com",
+    "project_id": "newritmaflex",
+    "storage_bucket": "newritmaflex.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382644969837:android:a5f31a9f6e5c6a9a233a64",
+        "android_client_info": {
+          "package_name": "com.example.stockapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "382644969837-109me83vao85vq4vlsge5iumdtklbh5m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABrZPlAZjGY-oHRl2OuHPuIRcBj_tZz04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "382644969837-109me83vao85vq4vlsge5iumdtklbh5m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
