@@ -21,18 +21,19 @@ class _HistoryPageState extends State<HistoryPage> {
     var id = await prefs.getString('countid');
     final QuerySnapshot result = await Firestore.instance
         .document("counts/" + id)
-        .collection("history")
+        .collection("history")  .orderBy('id', descending: true)
         .getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
 
-    documents.forEach((data) {
-      setState(() {
-        list.add(TimelineModel(
+  await documents.forEach((data) {
+      list.add(TimelineModel(
             id: data["id"].toString(),
             description:data["desc"].toString(),
             title:data["owner"].toString()));
       });
-    });
+      setState(() {
+        list;
+      });
   }
 
   @override

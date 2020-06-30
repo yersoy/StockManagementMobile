@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class NewCount extends StatefulWidget {
   NewCount({Key key}) : super(key: key);
@@ -43,10 +44,30 @@ class _NewCountState extends State<NewCount> {
   }
 
   addCount() async {
-    getMaxCount();
+    await getMaxCount();
+    final prefs = await SharedPreferences.getInstance();
+    String server = await prefs.getString('server');
+    var dataS = jsonDecode(await prefs.getString('user'));
+    final http.Response response = await http.post(
+      '$server/api/MStock/MCreateStock',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "UserAccountId": dataS["Data"]["UserAccountId"],
+        "UserGroupId": dataS["Data"]["UserGroupId"],
+        "PersonalId": dataS["Data"]["PersonalId"],
+        "Email": dataS["Data"]["Email"],
+        "PersonalName": dataS["Data"]["PersonalName"],
+        "SearchText": "",
+        "hdnStockId": 0,
+        "countname": _cName.text
+      }),
+    );
+    print(response.body);
     String uniqueCode = (max + 1).toString();
     DocumentReference reff =
-    Firestore.instance.document("counts/" + uniqueCode);
+        Firestore.instance.document("counts/" + uniqueCode);
     //Setting Data
     await reff.setData({
       'id': max + 1,
@@ -56,8 +77,11 @@ class _NewCountState extends State<NewCount> {
       'password': int.parse(_cPass.text),
       'startdate': new DateTime.now(),
       'enddate': new DateTime.now(),
-      'status': true
+      'status': true,
+      'servercountid': jsonDecode(response.body)["Data"]
     });
+    prefs.setString('countid', (max + 1).toString());
+
     Navigator.pushReplacementNamed(context, '/home');
   }
 

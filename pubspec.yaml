@@ -1,5 +1,5 @@
-name: stockapp
-description: A new Flutter project.
+name: RTMCount
+description: Ritma Stock Sayım Araci
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -25,8 +25,9 @@ dependencies:
   flutter_rounded_progress_bar: ^0.1.2
   google_fonts: ^0.5.0+1
   firebase_core: ^0.4.5
-  cloud_firestore: ^0.13.6
+  cloud_firestore: ^0.13.7
   sqflite: ^1.3.0
+  settings_ui: ^0.3.0
   flutter:
     sdk: flutter
 
@@ -34,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   font_awesome_flutter: ^8.8.1
+  intl: ^0.16.1
   timeline: ^0.0.1
   
 dev_dependencies:

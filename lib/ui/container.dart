@@ -1,12 +1,12 @@
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:stockapp/helper/db-helper.dart';
-import 'package:stockapp/ui/secondpage.dart';
+import 'package:RTMCount/helper/db-helper.dart';
+import 'package:RTMCount/ui/secondpage.dart';
 import 'history.dart';
 import 'homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'settings.dart';
 class ContainerPae extends StatefulWidget {
   ContainerPae({Key key}) : super(key: key);
 
@@ -102,11 +102,7 @@ class _ContainerPaeState extends State<ContainerPae>
           new homePage(),
           new secondWidget(),
           new HistoryPage(),
-          new Container(
-              child: FlatButton(
-            onPressed: () {},
-            child: Text("Çıkış Yap"),
-          )),
+          new Settings(),
         ],
       ),
     );

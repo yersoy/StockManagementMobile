@@ -9,10 +9,11 @@ import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stockapp/ui/update-stock.dart';
+import 'package:RTMCount/ui/update-stock.dart';
 import 'package:sweetalert/sweetalert.dart';
-import 'package:stockapp/helper/db-helper.dart';
+import 'package:RTMCount/helper/db-helper.dart';
 
 class homePage extends StatefulWidget {
   homePage({Key key}) : super(key: key);
@@ -73,13 +74,13 @@ class _homePageState extends State<homePage> with TickerProviderStateMixin {
     var uid =
         jsonDecode(await prefs.getString('user'))["Data"]["UserAccountId"];
     print(uid.toString() + " " + id.toString());
-    final QuerySnapshot result = await Firestore.instance
+    QuerySnapshot result = await Firestore.instance
         .document("counts/" + id)
         .collection("users")
         .where("uid", isEqualTo: uid.toString())
         .limit(1)
         .getDocuments();
-    final List<DocumentSnapshot> documents = result.documents;
+    List<DocumentSnapshot> documents = result.documents;
 
     documents.forEach((data) {
       setState(() {
@@ -173,7 +174,9 @@ class _homePageState extends State<homePage> with TickerProviderStateMixin {
       "barcode": item["barcode"],
       "name": item["name"],
       "count": item["count"],
-      "date": DateTime.now().toString()
+      "date": DateTime.now().toString(),
+      "buyprice": item["buyprice"],
+      "saleprice": item["saleprice"],
     });
 
     // Navigator.pushReplacementNamed(context, '/home');
@@ -182,20 +185,19 @@ class _homePageState extends State<homePage> with TickerProviderStateMixin {
   Future scan() async {
     if (scannable) {
       try {
-        String _name = "Deneme Ürün Adı";
-        int _count = 0;
-        String _date = DateTime.now().toString();
         String barcode = await BarcodeScanner.scan();
-        print(barcode + " eklendi");
-        // id INTEGER primary key autoincrement, barcoce  TEXT , name TEXT, count INTEGER,date TEXT
+        var data = await DbHelper.instance.getBarcode(barcode);
+
         await DbHelper.instance.insert({
           "barcode": barcode,
-          "name": _name,
-          "count": _count,
-          "date": _date
+          "name": data[0]["name"],
+          "count": data[0]["flcount"],
+          "date": DateTime.now().toString(),
+          "buyprice": data[0]["buyprice"],
+          "saleprice": data[0]["saleprice"],
         }).then((value) => loadTable());
         dynamic _data = await DbHelper.instance.getFiltered(barcode);
-        print(_data.toString() + " database çıktısı");
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -296,18 +298,31 @@ class _homePageState extends State<homePage> with TickerProviderStateMixin {
       floatingActionButton: FloatingActionButton(
         child: icon,
         onPressed: () {
-          if (ch == false) {
-            setState(() {
-              icon = CircularProgressIndicator(
-                valueColor: new AlwaysStoppedAnimation<Color>(Colors.blue),
-              );
-              sendThem();
-            });
+          if (queryRows.length > 0) {
+            if (ch == false) {
+              setState(() {
+                icon = CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.blue),
+                );
+                sendThem();
+              });
+            } else {
+              setState(() {
+                icon = Icon(FontAwesomeIcons.checkDouble);
+                ch = false;
+              });
+            }
           } else {
-            setState(() {
-              icon = Icon(FontAwesomeIcons.checkDouble);
-              ch = false;
-            });
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: Row(
+              children: <Widget>[
+                Icon(FontAwesomeIcons.times),
+                SizedBox(
+                  width: 30,
+                ),
+                Text("Sayım Listenizde Ürün & Hizmet Bulunamadı!")
+              ],
+            )));
           }
         },
       ),
@@ -415,7 +430,9 @@ class _homePageState extends State<homePage> with TickerProviderStateMixin {
                                                 "name": item["name"],
                                                 "barcode": item["barcode"],
                                                 "count": item["count"],
-                                                "date": item["date"]
+                                                "date": item["date"],
+                                                "buyprice": item["buyprice"],
+                                                "saleprice": item["saleprice"],
                                               },
                                             ),
                                         fullscreenDialog: true),

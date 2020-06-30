@@ -7,7 +7,7 @@ class DbHelper {
   static final _dbName = "ritmaCounter.db";
   static final _dbVersion = 1;
   static final _tableName = 'counts';
-
+  static final _tableCatalog = 'catalog';
   DbHelper._privateConstructor();
   static final DbHelper instance = DbHelper._privateConstructor();
   static Database _database;
@@ -25,7 +25,10 @@ class DbHelper {
 
   Future _onCreate(Database db, int version) {
     db.execute('''
-      CREATE TABLE $_tableName  (id INTEGER primary key autoincrement, barcode  String , name String, count INTEGER,date String)
+      CREATE TABLE $_tableName  (id INTEGER primary key autoincrement, barcode  String , name String, count INTEGER,date String,buyprice INTEGER , saleprice INTEGER)
+    ''');
+    db.execute('''
+      CREATE TABLE $_tableCatalog  (id INTEGER primary key autoincrement, barcode  String , name String, flcount INTEGER,date String,buyprice INTEGER , saleprice INTEGER)
     ''');
   }
 
@@ -38,14 +41,46 @@ class DbHelper {
     Database db = await instance.database;
     return await db.query(_tableName);
   }
- Future<List<Map<String, dynamic>>> getFiltered(code) async {
+
+  Future<int> insertCatalog(Map<String, dynamic> row) async {
     Database db = await instance.database;
-    return await db.query(_tableName, where: 'barcode = ?', whereArgs: [code],orderBy: "id desc",limit: 1,);
+
+    await db.insert(_tableCatalog, row);
   }
+
+  Future<List<Map<String, dynamic>>> getBarcode(barcode) async {
+    Database db = await instance.database;
+    return await db.query(
+      _tableCatalog,
+      where: 'barcode = ?',
+      whereArgs: [barcode],
+      orderBy: "id desc",
+      limit: 1,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getFiltered(code) async {
+    Database db = await instance.database;
+    return await db.query(
+      _tableName,
+      where: 'barcode = ?',
+      whereArgs: [code],
+      orderBy: "id desc",
+      limit: 1,
+    );
+  }
+
   Future<List<Map<String, dynamic>>> getFilteredId(id) async {
     Database db = await instance.database;
-    return await db.query(_tableName, where: 'barcode = ?', whereArgs: [id],orderBy: "id desc",limit: 1,);
+    return await db.query(
+      _tableName,
+      where: 'barcode = ?',
+      whereArgs: [id],
+      orderBy: "id desc",
+      limit: 1,
+    );
   }
+
   Future<int> update(Map<String, dynamic> row) async {
     Database db = await instance.database;
     int id = row["id"];

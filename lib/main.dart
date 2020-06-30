@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.grey,
         brightness: Brightness.light,
         primaryColor: Colors.grey[900],
-        accentColor: Colors.white,
+        accentColor: Colors.black,
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
       initialRoute: '/',

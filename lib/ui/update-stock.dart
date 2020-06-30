@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:stockapp/helper/db-helper.dart';
+import 'package:RTMCount/helper/db-helper.dart';
+import 'package:intl/intl.dart';
 
 class updateStock extends StatefulWidget {
   final barcodeData;
@@ -15,7 +16,9 @@ class _updateStockState extends State<updateStock> {
   TextEditingController _itemCount = TextEditingController();
   TextEditingController _itemName = TextEditingController();
   TextEditingController _itemCode = TextEditingController();
-  Map<String, dynamic> thisis;
+  TextEditingController _itemSale = TextEditingController();
+  TextEditingController _itemBuy = TextEditingController();
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   void showdialog(context) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -29,6 +32,17 @@ class _updateStockState extends State<updateStock> {
       ),
     ));
   }
+
+//   getThis(barcode) async {
+// //   : [{id: 1, barcode: MK-2EL-EDGETECH01, name: TERMAL KAMERA ÇEKİM HİZMETİ, flcount: 15, date: 2020-06-30 23:02:26.936886, buyprice: 1500, saleprice: 0}]
+
+//     var data = await DbHelper.instance.getBarcode("TMSCC1");
+//     print(data[0]);
+//     _itemName.text = data[0]["name"];
+//     _itemCount.text = data[0]["flcount"].toString();
+//     _itemSale.text = NumberFormat.currency(locale: 'eu', decimalDigits: 3).format(123456);
+//     _itemBuy.text = data[0]["buyprice"].toString();
+//   }
 
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
@@ -125,16 +139,18 @@ class _updateStockState extends State<updateStock> {
     _itemName.text = widget.barcodeData["name"].toString();
     _itemCount.text = widget.barcodeData["count"].toString();
     _itemCode.text = widget.barcodeData["barcode"].toString();
-    thisis = widget.barcodeData;
+    _itemSale.text = widget.barcodeData["saleprice"].toString();
+    _itemBuy.text = widget.barcodeData["buyprice"].toString();
   }
 
   void updateTable() async {
-
     await DbHelper.instance.update({
       "id": widget.barcodeData["id"],
       "name": _itemName.text,
       "count": int.parse(_itemCount.text),
-      "date": DateTime.now().toString()
+      "date": DateTime.now().toString(),
+      "saleprice": int.parse(_itemSale.text),
+      "buyprice": int.parse(_itemBuy.text)
     });
     await showdialog(context);
   }
@@ -164,12 +180,12 @@ class _updateStockState extends State<updateStock> {
               ),
             ),
             actions: <Widget>[
-              IconButton(
-                icon: Icon(FontAwesomeIcons.info),
-                onPressed: () {
-                  _settingModalBottomSheet(context);
-                },
-              ),
+              // IconButton(
+              //   icon: Icon(FontAwesomeIcons.info),
+              //   onPressed: () {
+              //     _settingModalBottomSheet(context);
+              //   },
+              // ),
               IconButton(
                 icon: const Icon(FontAwesomeIcons.save),
                 tooltip: 'Add new entry',
@@ -184,21 +200,71 @@ class _updateStockState extends State<updateStock> {
                   child: Container(
                       padding: EdgeInsets.all(10),
                       child: Column(children: <Widget>[
-                        TextFormField(
+                        TextField(
+                          keyboardType: TextInputType.text,
                           controller: _itemCode,
-                          enabled: false,
-                          decoration: InputDecoration(labelText: 'Ürün Kodu'),
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                                backgroundColor: Colors.white, height: 1),
+                            border: OutlineInputBorder(),
+                            labelText: 'Ürün Kodu',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          keyboardType: TextInputType.number,
+                          controller: _itemCount,
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                                backgroundColor: Colors.white, height: 1),
+                            border: OutlineInputBorder(),
+                            labelText: "Sayım Sonucu Stok",
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          keyboardType: TextInputType.text,
+                          controller: _itemName,
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                                backgroundColor: Colors.white, height: 1),
+                            border: OutlineInputBorder(),
+                            labelText: 'Ürün Adı',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextField(
+                          keyboardType: TextInputType.text,
+                          controller: _itemSale,
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                                backgroundColor: Colors.white, height: 1),
+                            border: OutlineInputBorder(),
+                            labelText: 'Alış Fiyatı',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
 
-                        TextFormField(
-                          controller: _itemCount,
-                          keyboardType: TextInputType.number,
-                          decoration:
-                              InputDecoration(labelText: 'Sayım Sonucu Stok'),
+                        TextField(
+                          keyboardType: TextInputType.text,
+                          controller: _itemBuy,
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                                backgroundColor: Colors.white, height: 1),
+                            border: OutlineInputBorder(),
+                            labelText: 'Satış Fiyatı',
+                          ),
                         ),
-                        TextFormField(
-                          controller: _itemName,
-                          decoration: InputDecoration(labelText: 'Ürün Adı'),
+                        SizedBox(
+                          height: 10,
                         ),
 
                         //  RaisedButton(

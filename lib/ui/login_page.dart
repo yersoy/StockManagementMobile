@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stockapp/utils/bubble_indication_painter.dart';
+import 'package:RTMCount/utils/bubble_indication_painter.dart';
 import '../theme.dart' as Theme;
 
 import 'package:http/http.dart' as http;
